@@ -24,9 +24,39 @@ router.get('/', auth, async (req, res) => {
 // @route     POST api/expenses
 // @desc      Add new expense
 // @access    Private
-router.post('/', (req, res) => {
-  res.send('Add new expense');
-});
+router.post(
+  '/',
+  [
+    auth,
+    [
+      check('name', 'Name is required')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, amount, date } = req.body;
+
+    try {
+      const newExpense = new Expense({
+        name,
+        amount,
+        date,
+        user: req.user.id
+      });
+
+      const expense = await newExpense.save();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Server Error');
+    }
+  }
+);
 
 // @route     PUT api/expenses/:id
 // @desc      Update expense
