@@ -51,6 +51,8 @@ router.post(
       });
 
       const expense = await newExpense.save();
+
+      res.json(expense);
     } catch (err) {
       console.error(err);
       res.status(500).send('Server Error');
