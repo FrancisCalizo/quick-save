@@ -75,7 +75,7 @@ router.put('/:id', auth, async (req, res) => {
   try {
     let expense = await Expense.findById(req.params.id);
 
-    if (!expense) return res.status(404).json({ msg: 'Contact not found' });
+    if (!expense) return res.status(404).json({ msg: 'Expense not found' });
 
     // Make sure user owns expense
     if (expense.user.toString() !== req.user.id) {
@@ -98,8 +98,24 @@ router.put('/:id', auth, async (req, res) => {
 // @route     DELETE api/expenses/:id
 // @desc      Delete expense
 // @access    Private
-router.delete('/:id', (req, res) => {
-  res.send('Delete expense');
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    let expense = await Expense.findById(req.params.id);
+
+    if (!expense) return res.status(404).json({ msg: 'Expense not found' });
+
+    // Make sure user owns expense
+    if (expense.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'Not Authorized' });
+    }
+
+    await Expense.findByIdAndRemove(req.params.id);
+
+    res.json({ msg: 'Expense Removed' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
 module.exports = router;
