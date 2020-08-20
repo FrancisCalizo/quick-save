@@ -9,7 +9,7 @@
   "author": "Francis Calizo",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.0.0",
     "concurrently": "^5.0.0",
     "config": "^3.2.4",
     "express": "^4.17.1",
